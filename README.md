@@ -1,55 +1,71 @@
 # Redux Compact
 
-Reduces boilerplate and helps you write more maintanable code with redux.
+Redux Compact is a library that aims to reduce the massive amount of boilerplate that follows maintaining a Flutter Redux application.
 
-## Getting started
+## Usage
 
-Redux compact only dependency is [Redux](https://pub.dev/packages/redux). If you are using Flutter I recommend using [Flutter Redux](https://pub.dev/packages/flutter_redux) as well to easily consume a Redux Store.
+_This documentation assumes you are already familiar with_
 
-For complete example check out the [examples](https://github.com/omaroskars/redux_compact/tree/master/example).
+- [Redux](https://pub.dev/packages/redux) and its core concepts
+- [Flutter Redux](https://pub.dev/packages/flutter_redux) setup and usage
 
-## Store
+For a full overview checkout the [Examples](https://github.com/omaroskars/redux_compact/tree/master/example)
 
-Follow the setup guide for [Flutter Redux](https://pub.dev/packages/flutter_redux). Create an instance of Redux compact **reducer** and **middleware** and pass it to the store.
+### Store
 
 ```dart
-final compactReducer = ReduxCompact.createReducer<int>();
-final compactMiddleware = ReduxCompact.createMiddleware<int>();
+final compactReducer = ReduxCompact.createReducer<AppState>();
+final compactMiddleware = ReduxCompact.createMiddleware<AppState>();
 
-final store = new Store<int>(
-  compactReducer
-  initialState: 0,
+var state = AppState.initalState();
+
+final store = new Store<AppState>(
+  compactReducer, // <-- Use ReduxCompact reducer
+  initialState: state,
   middleware: [
-    compactMiddleware,
+    compactMiddleware, // <-- Use ReduxCompact middleware
   ],
 );
 ```
 
+### Action
+
+```dart
+class IncrementCountAction extends ReduxAction<AppState> {
+  final int incrementBy;
+
+  IncrementCountAction(this.incrementBy);
+
+  @override
+  int reduce(status) {
+    // The reduce method acts as the reducer for this action
+    // It has direct access to the store state
+    return state.count + incrementBy;
+  }
+}
+```
+
 ## ReduxAction
 
-In order to use Redux Compact you must dispatch an action that extends `ReduxAction`.
+All methods have direct access to:
 
-**Public methods**
+- The store state
+- The action instance variables
+- The dispatch method, so that other actions may be dispatched
 
 _Required:_
 
-- **`T reduce(RequestStatus):`** Acts as the reducer for the action so all state manipulation will occur here. The RequestStatus holds information about status of an async operation: ie `bool isLoading, dynamic error and dynamic data`.
+- **`reduce(RequestStatus):`** Acts as the reducer for the action so all state manipulation will occur here. The RequestStatus holds information about status of an async operation: ie `bool isLoading, dynamic error and dynamic data`.
 
 _Optional:_
 
-- **`FutureOr<dynamic> request():`:** Makes the action asyncrounus. Must be implemented as a Future. The reduce method will receive the request status in order to act accordingly.
+- **`request():`:** Makes the action asyncrounus. Must be implemented as a Future. The reduce method will receive the request status in order to act accordingly.
 
-- **`void before():`** Helper method for chaining. Will be called before each dispatched action.
+- **`before():`** Helper method for chaining. Will be called before each dispatched action.
 
-- **`void after():`** Helper method for chaining. Will be called after each dispatched action.
+- **`after():`** Helper method for chaining. Will be called after each dispatched action.
 
-**All methods have direct access to:**
-
-- The store state
-- The Action instance variables
-- The dispatch method, so that other actions may be dispatched
-
-#### Sync action
+### Sync action
 
 ```dart
 class IncrementCountAction extends ReduxAction<int> {
@@ -60,7 +76,7 @@ class IncrementCountAction extends ReduxAction<int> {
 }
 ```
 
-#### Async Action
+### Async Action
 
 ```dart
 class IncrementCountAction extends ReduxAction<AppState> {
@@ -96,13 +112,13 @@ class IncrementCountAction extends ReduxAction<AppState> {
 }
 ```
 
-#### Chaining Action
+### Chaining Action
 
 TODO:
 
 ### BaseModel
 
-TODO
+BaseModel has direct access to the store state and dispatch method.
 
 ```dart
 class _VM extends BaseModel<AppState> {
