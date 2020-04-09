@@ -1,0 +1,26 @@
+name: redux_compact_example
+description: Example project for redux_compact.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter_redux: ^0.6.0
+  http: ^0.12.0+4
+  redux_compact:
+    path: ../
+
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+# The following section is specific to Flutter.
+flutter:
+  uses-material-design: true
