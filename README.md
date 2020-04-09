@@ -98,28 +98,7 @@ class IncrementCountAction extends ReduxAction<AppState> {
 
 #### Chaining Action
 
-```dart
-class SomeAction extends ReduxAction<String> {
-  final String message;
-
-  ShowMessageAction(this.message);
-
-  @override
-  int reduce(status) {
-    return state + 1;
-  }
-
-  @override
-  void before() {
-    dispatch(BeforeAction())
-  }
-
-  @override
-  void after() {
-    dispatch(SomeOtherAction());
-  }
-}
-```
+TODO:
 
 ### BaseModel
 
