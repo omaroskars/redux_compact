@@ -186,7 +186,7 @@ class IncrementCountAction extends CompactAction<AppState> {
 
   @override
   void before() {
-    dispatch(ShowDescriptionCountAction());
+    dispatch(SetPreviousDescAction());
   }
 
   @override
@@ -196,7 +196,7 @@ class IncrementCountAction extends CompactAction<AppState> {
 }
 
 /// Updates the precDesc state with the current description state
-class ShowDescriptionCountAction extends CompactAction<AppState> {
+class SetPreviousDescAction extends CompactAction<AppState> {
   @override
   AppState reduce(RequestStatus status) {
     return state.copy(
