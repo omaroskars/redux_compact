@@ -134,9 +134,45 @@ class IncrementCountAction extends ReduxAction<AppState> {
 }
 ```
 
-### Chaining Action
+### Chaining Actions
 
-TODO:
+Compact Action provides two helper functions in which you can use to chain some functionalities:
+
+- `void before:` Runs before the reduce method
+- `void after:` Runs after the reduce method
+
+These methods have direct access to the state and dispatch function and the class instance variables. You can therefore dispatch other actions before or after the current action runs. These methods can be really helpfull with complicated functionalities that depend on each other.
+
+**Just remember that the state changes:**
+
+- **Have not taken** place in the `before` method
+- **Have taken place** in the `after` method
+
+```dart
+
+class IncrementCountAction extends CompactAction<AppState> {
+  final int incrementBy;
+
+  IncrementCountAction(this.incrementBy);
+
+  @override
+  AppState reduce(RequestStatus status) {
+    return state.copy(
+      counter: state.counter + incrementBy,
+    );
+  }
+
+  @override
+  void before() {
+    dispatch(SetPreviousDescAction());
+  }
+
+  @override
+  void after() {
+    dispatch(FetchDescriptionAction(state.counter));
+  }
+}
+```
 
 ## BaseModel
 
