@@ -7,7 +7,7 @@ class ReduxCompact<St> {
   static Middleware<St> createMiddleware<St>({
     ErrorFn onError,
   }) {
-    return createMiddleware(
+    return createCompactMiddleware(
       onError: onError,
     );
   }

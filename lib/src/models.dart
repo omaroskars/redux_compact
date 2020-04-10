@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:redux/redux.dart';
 
-typedef Dispatch<St> = void Function(ReduxAction<St> action);
+typedef Dispatch<St> = void Function(CompactAction<St> action);
 
-abstract class ReduxAction<St> {
+abstract class CompactAction<St> {
   Store<St> _store;
 
   void setStore(Store store) => _store = (store as Store<St>);
@@ -37,10 +37,10 @@ class RequestStatus {
 }
 
 class ReduceAction {
-  final ReduxAction reduxAction;
+  final CompactAction action;
   final RequestStatus status;
 
-  ReduceAction(this.reduxAction, this.status);
+  ReduceAction(this.action, this.status);
 }
 
 abstract class BaseModel<T> {

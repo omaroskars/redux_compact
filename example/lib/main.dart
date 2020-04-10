@@ -5,7 +5,7 @@ import 'package:redux/redux.dart';
 import 'package:redux_compact/redux_compact.dart';
 
 // One simple action: Increment
-class IncrementCountAction extends ReduxAction<int> {
+class IncrementCountAction extends CompactAction<int> {
   // The reduce method acts as a reducer for this action.
   // It takes the previous count and increments it when this action is dispatched
   @override

@@ -62,6 +62,7 @@ class AppState {
 void main() {
   // Create an instance of Redux Compact reducer and middleware
   // and initialize the redux store
+
   final compactReducer = ReduxCompact.createReducer<AppState>();
   final compactMiddleware = ReduxCompact.createMiddleware<AppState>();
 
@@ -109,7 +110,7 @@ class MyApp extends StatelessWidget {
 
 /// Helper class known as a ViewModel.
 /// The view model has direct access to the store's state for convenience.
-/// You can therefore use the state directly or access it through the store.state
+/// You can therefore use the state directly or access it through the store.state if you like
 
 class _VM extends BaseModel<AppState> {
   final int count;
@@ -139,10 +140,12 @@ class CounterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _VM>(
-      converter: (store) => _VM(store).fromStore(), // initialize the VM
+      converter: (store) => _VM(store).fromStore(),
       builder: (context, vm) => Scaffold(
-        appBar: AppBar(title: Text("Redux compact async demo")),
-        body: buildBody(context, vm),
+        appBar: AppBar(title: Text("Async demo")),
+        body: Center(
+          child: buildBody(context, vm),
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => vm.dispatch(IncrementCountAction()),
           tooltip: "Increment",
@@ -154,17 +157,15 @@ class CounterWidget extends StatelessWidget {
 
   Widget buildBody(BuildContext context, _VM vm) {
     if (vm.isLoading) {
-      return Center(
-        child: CircularProgressIndicator(
-          backgroundColor: Colors.blue,
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          strokeWidth: 2,
-        ),
+      return CircularProgressIndicator(
+        backgroundColor: Colors.blue,
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        strokeWidth: 2,
       );
     }
 
     if (vm.errorMsg != null) {
-      return Center(child: Text(vm.errorMsg));
+      return Text(vm.errorMsg);
     }
 
     return Column(
@@ -191,9 +192,9 @@ class CounterWidget extends StatelessWidget {
 /// This action makes an asynchronous request to the numbers api.
 /// Updates the state when its loading,
 /// When it gets a response it increments the counter and updates the description with the response
-class IncrementCountAction extends ReduxAction<AppState> {
+class IncrementCountAction extends CompactAction<AppState> {
   @override
-  request() {
+  Future request() {
     final url = "http://numbersapi.com/${state.counter + 1}";
     final res = http.read(url);
 

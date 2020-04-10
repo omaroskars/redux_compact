@@ -4,14 +4,14 @@ import 'models.dart';
 
 typedef ErrorFn = Function(dynamic error);
 
-Middleware<St> createMiddleware<St>({
+Middleware<St> createCompactMiddleware<St>({
   Function onRequest,
   Function onError,
 }) {
   return (Store<St> store, dynamic act, NextDispatcher next) async {
     next(act);
 
-    final action = isReduxAction(act);
+    final action = isCompactAction(act);
     if (action == null) {
       return;
     }
@@ -50,7 +50,7 @@ Middleware<St> createMiddleware<St>({
   };
 }
 
-ReduxAction isReduxAction(dynamic action) {
-  if (action is ReduxAction) return action;
+CompactAction isCompactAction(dynamic action) {
+  if (action is CompactAction) return action;
   return null;
 }
