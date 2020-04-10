@@ -43,7 +43,6 @@ Then `dispatch` an action that extends `CompactAction`
 // When this action is dispatched the reduce method will
 // update state counter by incrementedBy
 class IncrementCountAction extends CompactAction<AppState> {
-
   final int incrementBy;
 
   IncrementCountAction(this.incrementBy);
@@ -141,7 +140,7 @@ Compact Action provides two helper functions in which you can use to chain some 
 - `void before:` Runs before the reduce method
 - `void after:` Runs after the reduce method
 
-These methods have direct access to the state and dispatch function and the class instance variables. You can therefore dispatch other actions before or after the current action runs. These methods can be really helpfull with complicated functionalities that depend on each other.
+These methods have direct access to the state, dispatch function and the class instance variables. You can therefore call or dispatch, other functions or actions, before or after the current action runs. These methods can be really helpfull with more complicated functionalities that are dependant on each other.
 
 **Just remember that the state changes:**
 
