@@ -2,31 +2,12 @@
 
 Redux Compact is a library that aims to reduce the massive amount of boilerplate that follows maintaining a Flutter Redux application.
 
-`Compact middleware` intercepts all [Compact Actions](#compact-action) which can be both `sync-` and `asyncrounus`. The `Compact reducer` handles theese actions with a callback function called `reduce` which allows you to do corresponding state changes within the action.
+`Compact middleware` intercepts all [Compact Actions](#compact-action) which can be both `sync-` and `asyncrounus`. The `Compact reducer` handles theese actions with a callback function called `reduce` which allows you to do corresponding state changes within the action itself.
 
-With this approach you dont need to maintain seperate files and folders for actions and reducers and you dont need to create and dispatch multiple actions to handle asyncrounus state.
+With this approach you dont need to:
 
-<!-- `Compact Action` has access to the Redux store and state and provides you with the ability to dispatch and chain actions. The `reduce` method receives a `request state` as a paramater which allows you to react to asyncrounus state changes. With this approach you dont need to maintain seperate files and folders for actions and reducers and you dont need to `create` and `dispatch` multiple actions to handle asyncrounus state. -->
-
- <!-- This allows you to stop writing the huge amount of boilerplate that follows when `creating`, `combining` and `mapping` reducers and `creating` and `dispatching` multiple actions for asyncrounus state. -->
-
-<!-- When you dispatch a Compact Action the state change occurs in the action `reduce` method. With this approach you dont need to maintain seperate files and folders for actions and reducers, in fact the only reducer you need is the Comptact reducer. This allows you to stop writing the huge amount of boilerplate that follows when `creating`, `combining` and `mapping` reducers.
-
-The Compact Action can be both sync and asyncrounus and provides you the ability to chain. When the action is asyncrounus the reduce method receives the request state as parameter allowing you make corresponding state changes. This reduces the amount of actions you need to maintain asyncrounus state changes. -->
-
-<!-- - All actions are handled with a single reducer -->
-
-<!-- Actions and reducers are the same instance class
-
-- You don't seprate actions from reducers
-- Compact reducer handles all actions
-
-Actions can be both sync- and asyncrounus
-
-- Hanlde sync and asyncrounus state changes
-- Easy to chain actions -->
-
-<!-- The ReduxCompactMiddleware intercepts a `ReduxAction` which has access to both the Redux store and state which allows you make **sync- or asyncrounus** state changes within a single class. -->
+- Maintain seperate files and folders for actions and reducers
+- Create and dispatch multiple actions to handle asyncrounus state.
 
 ## Usage
 
@@ -83,11 +64,11 @@ In order to use Redux Compact you must `dispatch` an action that extends a **`Co
 All actions must implement the **`reduce`** method which acts as reducer for the action.
 The reduce method receives a `RequestStatus` as parameter to keep track of asyncrounus state and has direct access to:
 
-- instance variables,
+- instance variables
 - dispatch function
-- store state.
+- the store state
 
-_Keep in mind like normal reducers the `reduce` method will \*always update the state with the **return value**. If you do not wish to update the state, simply return `state`. Returning `null` will result in the state being null._
+_Keep in mind like normal reducers the `reduce` method will always update the state with the **return value**. If you do not wish to update the state, simply return `state`. Returning `null` will result with the state being null._
 
 ### Sync action
 
@@ -159,30 +140,44 @@ TODO:
 
 ## BaseModel
 
-BaseModel has direct access to the store state and dispatch method.
+_Base Model is not mandatory for ReduxCompact to function, it is a convenient helper class to quickly create a `ViewModel` for the `Redux StoreConnector`._
+
+Base model has direct access to:
+
+- the store state
+- dispatch method.
+
+If you would like to use a `BaseModel`, create a class that extends `BaseModel` and implement the `fromStore` method.
 
 ```dart
 class _VM extends BaseModel<AppState> {
   final int count;
-  final String desc;
-  final bool isLoading;
-  final String errorMsg;
 
   _VM(
-    Store store, {
-    this.count,
-    this.desc,
-    this.isLoading,
-    this.errorMsg
-  }) : super(store);
+    Store store, { this.count }) : super(store);
 
   @override
-  BaseModel fromStore() {
-    return _VM(store,
-        count: state.counter,
-        desc: state.description,
-        isLoading: state.isLoading,
-        errorMsg: state.errorMsg);
+  AppState fromStore() {
+    return _VM(store, count: state.counter);
+  }
+
+  // You can dispatch an action from the VM
+  // or call vm.dispatch(...) from the widget
+  void incrementCount() {
+    dispatch(IncrementCountAction(state.counter + 1));
   }
 }
+```
+
+Then create an instance of view model the in the Widget's `StoreConnector`
+
+```dart
+class CounterWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector<AppState, _VM>(
+      converter: (store) => _VM(store).fromStore(), // <-- Initialize the VM
+      builder: (context, vm) => Container(...),
+    );
+  }
 ```
