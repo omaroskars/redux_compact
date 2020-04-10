@@ -117,7 +117,7 @@ The **`RequestStatus`** is an object that consist of three variables and one get
 - `bool isLoading:` True when wating for a response, false otherwise
 - `dynamic error:` If the request results in error, this variable will hold the error object.
 - `dynamic data:` If the request is successfull, this will be the resonse
-- `bool hasError`: Simple getter which checks if the status error is null or not
+- `bool hasError`: Simple getter which checks if the status error is null or not.
 
 ```dart
 class IncrementCountAction extends ReduxAction<AppState> {
