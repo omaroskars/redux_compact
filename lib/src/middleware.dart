@@ -4,10 +4,7 @@ import 'models.dart';
 
 typedef ErrorFn = Function(dynamic error);
 
-Middleware<St> createCompactMiddleware<St>({
-  Function onRequest,
-  Function onError,
-}) {
+Middleware<St> createCompactMiddleware<St>({Function onError}) {
   return (Store<St> store, dynamic act, NextDispatcher next) async {
     next(act);
 
