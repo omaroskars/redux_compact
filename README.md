@@ -140,12 +140,9 @@ class IncrementCountAction extends CompactAction<AppState> {
 
 Compact Action provides two helper functions, `before` and `after`. Both of these methods have direct access to the `state`, `dispatch` function and class `instance variables`. You can therefore call or dispatch, other functions or actions, before or after the current action runs.
 
-- The `before` method **always** runs before the `reduce` method and `asynchronous` request is made.
-<!-- the middleware actually dispatches the current action. This allows you to call or dispatch other functions or actions before the reducer runs or asynchronous request is made. -->
+- The `before` method **always** runs before the `reduce` method and `asynchronous` requests.
 
-* The `after` method runs after the `reduce` method, or when an `asynchronous` request has **finished successfully**. If an error occurred in an asynchronous request the `after` method will **not run**.
-
-<!-- These methods have direct access to the state, dispatch function and the class instance variables. You can therefore call or dispatch, other functions or actions, before or after the current action runs. These methods can be really helpfull with more complicated functionalities that are dependant on each other. -->
+- The `after` method runs after the `reduce` method, or when an `asynchronous` request has **finished successfully**. If an error occurred in an asynchronous request the method will **not run**.
 
 **Just remember the state:**
 
