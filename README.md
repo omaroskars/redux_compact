@@ -2,18 +2,17 @@
 
 Redux Compact is a library that aims to reduce the massive amount of boilerplate that follows maintaining a Flutter Redux application.
 
-`Compact middleware` intercepts all [Compact Actions](#compact-action) which can be both `sync-` and `asyncrounus`. The `Compact reducer` handles theese actions with a callback function called `reduce` which allows you to do corresponding state changes within the action itself.
+The library provides a set of middleware and a reducer that intercept a special kind of action called [Compact Action](#compact-action). The action has direct access to the state and can be both `sync-` and `asynchronous` and provides you the ability to chain actions. The action’s reducer is a method called `reduce` which allows you to make corresponding state changes within the action itself.
 
-With this approach you dont need to:
-
-- Maintain seperate files and folders for actions and reducers
-- Create and dispatch multiple actions to handle asyncrounus state.
+This approach eliminates the need to maintain separate files and folders for actions and reducers and to create and dispatch multiple actions to handle asynchronous state.
 
 ## Usage
 
+_This documentation assumes you are already familiar with [Redux](https://pub.dev/packages/redux) and [Flutter Redux](https://pub.dev/packages/flutter_redux), their core concepts, setup and usage._
+
 For a full overview visit the [examples](https://github.com/omaroskars/redux_compact/tree/master/example)
 
-This documentation assumes you are already familiar with
+<!--This documentation assumes you are already familiar with
 
 - [Redux](https://pub.dev/packages/redux) and its core concepts
 - [Flutter Redux](https://pub.dev/packages/flutter_redux) setup and usage
@@ -22,7 +21,9 @@ You should setup your app and store as recommended by [Flutter Redux](https://pu
 
 In order to use Redux Compact you must add add the `compactMiddlware` to the store and use the `compactReducer` to maintain some state.
 
-In this exmaple the `compactReducer` is the root reducer for `AppState`.
+In this exmaple the `compactReducer` is the root reducer for `AppState`. -->
+
+Create your store as recommended by Flutter Redux. Add Redux Compact middleware and reducer to the store.
 
 ```dart
 final compactReducer = ReduxCompact.createReducer<AppState>();
@@ -58,21 +59,20 @@ class IncrementCountAction extends CompactAction<AppState> {
 
 ## Compact Action
 
-In order to use Redux Compact you must `dispatch` an action that extends a **`CompactAction`**.
+In order to use Redux Compact you must `dispatch` an action that extends a `CompactAction`.
 
-All actions must implement the **`reduce`** method which acts as reducer for the action.
-The reduce method receives a `RequestStatus` as parameter to keep track of asyncrounus state and has direct access to:
+All compact actions must implement the `reduce` method which is the reducer for the action. The reduce method has direct access to instance variables, dispatch function and the store state. The method accepts a `RequestStatus` as parameter to keep track of asynchronous state.
 
-- instance variables
-- dispatch function
-- the store state
+**Keep in mind**
 
-_Keep in mind like normal reducers the `reduce` method will always update the state with the **return value**. If you do not wish to update the state, simply return `state`. Returning `null` will result with the state being null._
+- Like normal reducers the reduce method always expects to return a state. If you do not wish to update the state, simply return `state`, returning `null` updates the state to null.
+
+* Even though the reduce method has access to the dispatch function, **dispatching an action in a reducer is an antipattern**. If you wish to dispatch another action read the [chaining actions](#chaining-actions) section.
 
 ### Sync action
 
 ```dart
-class IncrementCountAction extends ReduxAction<AppState> {
+class IncrementCountAction extends CompactAction<AppState> {
   final int incrementBy;
 
   IncrementCountAction(this.incrementBy);
@@ -86,45 +86,50 @@ class IncrementCountAction extends ReduxAction<AppState> {
 }
 ```
 
-_\*Note: The request status will always be `null` for syncrounus actions_
+_\*Note: The request status will always be `null` for synchronous actions_
 
 ### Async Action
 
-To create an asyncrounus action you simply need to implement the **`request()`** method as a `Future`. The middleware then `awaits` the request and calls the `reduce` method with updated `RequestStatus` parameter.
+To create an asynchronous action you simply need to implement the `request()` method as a `Future`. The middleware then `awaits` the request and calls the reduce method with a `RequestStatus`. As your request executes the values of `Request Status` change allowing you to make state changes accordingly.
 
-The **`RequestStatus`** is an object that consist of three variables and one getter:
+The `RequestStatus` is an object that contains:
 
-- `bool isLoading:` True when wating for a response, false otherwise
-- `dynamic error:` If the request results in error, this variable will hold the error object.
-- `dynamic data:` If the request is successfull, this will be the resonse
-- `bool hasError`: Simple getter which checks if the status error is null or not.
+- **isLoading:** `true` if a request is in flight, `false` otherwise
+- **error:** `dynamic` if an error occurs, `null` otherwise
+- **data**: `dynamic` if the request is successful, `null` otherwise
 
 ```dart
-class IncrementCountAction extends ReduxAction<AppState> {
+class IncrementCountAction extends CompactAction<AppState> {
+  final int incrementBy;
+
+  IncrementCountAction(this.incrementBy);
+
   @override
   request() {
-    final url = "http://numbersapi.com/${state.counter + 1}";
-    final res = http.read(url);
+    // The request method has direct access to
+    // instance variable and current state
+    const count = state.counter + incrementBy;
+    final url = "http://numbersapi.com/$count";
 
-    return res;
+    // Return a future
+    return http.read(url);
   }
 
   @override
   AppState reduce(RequestStatus status) {
-    // Handle loading state
+    // If we are waiting for a response isLoading, will be true.
     if (status.isLoading) {
       return state.copy(isLoading: status.isLoading);
     }
 
-    // Update the error message if an error occurs
+    // hasError is a helper function that checks if error != null
     if (status.hasError) {
       return state.copy(
-        errorMsg: "Error occured",
+        errorMsg: error.message,
       );
     }
 
-    // Update the state with incremented counter
-    // and a description from the server
+    // The request was successful
     return state.copy(
       counter: state.counter + 1,
       description: status.data,
@@ -135,20 +140,21 @@ class IncrementCountAction extends ReduxAction<AppState> {
 
 ### Chaining Actions
 
-Compact Action provides two helper functions in which you can use to chain some functionalities:
+Compact Action provides two helper functions, `before` and `after`. Both of these methods have direct access to the `state`, `dispatch` function and class `instance variables`. You can therefore call or dispatch, other functions or actions, before or after the current action runs.
 
-- `void before:` Runs before the reduce method
-- `void after:` Runs after the reduce method
+- The `before` method **always** runs before the `reduce` method and `asynchronous` request is made.
+<!-- the middleware actually dispatches the current action. This allows you to call or dispatch other functions or actions before the reducer runs or asynchronous request is made. -->
 
-These methods have direct access to the state, dispatch function and the class instance variables. You can therefore call or dispatch, other functions or actions, before or after the current action runs. These methods can be really helpfull with more complicated functionalities that are dependant on each other.
+* The `after` method runs after the `reduce` method, or when an `asynchronous` request has **finished successfully**. If an error occurred in an asynchronous request the `after` method will **not run**.
 
-**Just remember that the state changes:**
+<!-- These methods have direct access to the state, dispatch function and the class instance variables. You can therefore call or dispatch, other functions or actions, before or after the current action runs. These methods can be really helpfull with more complicated functionalities that are dependant on each other. -->
 
-- **Have not taken** place in the `before` method
-- **Have taken place** in the `after` method
+**Just remember the state:**
+
+- Has **not changed** in the `before` method
+- Has **changed** in the `after` method
 
 ```dart
-
 class IncrementCountAction extends CompactAction<AppState> {
   final int incrementBy;
 
@@ -156,6 +162,7 @@ class IncrementCountAction extends CompactAction<AppState> {
 
   @override
   AppState reduce(RequestStatus status) {
+    // The reducer only increments the count
     return state.copy(
       counter: state.counter + incrementBy,
     );
@@ -163,11 +170,15 @@ class IncrementCountAction extends CompactAction<AppState> {
 
   @override
   void before() {
+    // Before the reducer runs we dispatch an action
+    // that copies the current state.
     dispatch(SetPreviousDescAction());
   }
 
   @override
   void after() {
+    // After the reduce method runs
+    // We dispatch an action to fetch a description for the counter
     dispatch(FetchDescriptionAction(state.counter));
   }
 }
@@ -175,21 +186,15 @@ class IncrementCountAction extends CompactAction<AppState> {
 
 ## BaseModel
 
-_Base Model is not mandatory for ReduxCompact to function, it is a convenient helper class to quickly create a `ViewModel` for the `Redux StoreConnector`._
+`BaseModel` is a convenient class to quickly create a `ViewModel` for the Redux `StoreConnector`. It has direct access to the `store state` and the `dispatch` function. You can therefore dispatch an action within the model or the widget.
 
-Base model has direct access to:
-
-- the store state
-- dispatch method.
-
-If you would like to use a `BaseModel`, create a class that extends `BaseModel` and implement the `fromStore` method.
+`BaseModel` is not mandatory class for Redux Compact. You can use basic `ViewModels` if you want as long as you dispatch a `CompactAction`. If you would like to use a `BaseModel`, create a class that extends `BaseModel` and implement the `fromStore` method.
 
 ```dart
 class _VM extends BaseModel<AppState> {
   final int count;
 
-  _VM(
-    Store store, { this.count }) : super(store);
+  _VM(Store store, { this.count }) : super(store);
 
   @override
   AppState fromStore() {
@@ -204,7 +209,7 @@ class _VM extends BaseModel<AppState> {
 }
 ```
 
-Then create an instance of view model the in the Widget's `StoreConnector`
+Then initialize `BaseModel` with the `fromStore` method in the in the Widget's `StoreConnector`
 
 ```dart
 class CounterWidget extends StatelessWidget {
