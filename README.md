@@ -41,8 +41,6 @@ final store = new Store<AppState>(
 Then `dispatch` an action that extends `CompactAction`
 
 ```dart
-// When this action is dispatched the reduce method will
-// update state counter by incrementedBy
 class IncrementCountAction extends CompactAction<AppState> {
   final int incrementBy;
 
