@@ -183,7 +183,7 @@ class IncrementCountAction extends CompactAction<AppState> {
 
 `BaseModel` is a convenient class to quickly create a `ViewModel` for the Redux `StoreConnector`. It has direct access to the `store state` and the `dispatch` function. You can therefore dispatch an action within the model or the widget.
 
-`BaseModel` is not mandatory class for Redux Compact. You can use basic `ViewModels` if you want as long as you dispatch a `CompactAction`. If you would like to use a `BaseModel`, create a class that extends `BaseModel` and implement the `fromStore` method.
+`BaseModel` is not a mandatory class for Redux Compact. You can use basic `ViewModels` if you want as long as you dispatch a `CompactAction`. If you would like to use a `BaseModel`, create a class that extends `BaseModel` and implement the `fromStore` method.
 
 ```dart
 class _VM extends BaseModel<AppState> {
