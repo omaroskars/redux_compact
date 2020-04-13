@@ -4,33 +4,26 @@ import 'package:redux/redux.dart';
 
 import 'package:redux_compact/redux_compact.dart';
 
-// One simple action: Increment
-class IncrementCountAction extends CompactAction<int> {
-  // The reduce method acts as a reducer for this action.
-  // It takes the previous count and increments it when this action is dispatched
-  @override
-  int reduce(status) {
-    return state + 1;
-  }
-}
+///////////////////////////////////////////////////////////////////////////////
+/// Initialize the store as recommended by Flutter redux
 
 void main() {
-  // Create an instance of ReduxCompact reducer and middleware
-  // and initialize the redux store
+  // Create an instance of ReduxCompact reducer and middleware.
+  // In this example the AppState is an integer representing a counter
   final compactReducer = ReduxCompact.createReducer<int>();
   final compactMiddleware = ReduxCompact.createMiddleware<int>();
 
   final store = new Store<int>(
-    compactReducer,
+    compactReducer, // <-- Add the reducer
     initialState: 0,
     middleware: [
-      compactMiddleware,
+      compactMiddleware, // <-- Add the middleware
     ],
   );
 
   runApp(MyApp(
     store: store,
-    title: "Redux Compact Demo",
+    title: "Redux Compact",
   ));
 }
 
@@ -55,8 +48,24 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// By extending BaseModel the ViewModel
-// gains access to the store, state and dispatch
+///////////////////////////////////////////////////////////////////////////////
+/// The action increments the counter by [incrementBy]
+class IncrementCountAction extends CompactAction<int> {
+  final int incrementBy;
+
+  IncrementCountAction(this.incrementBy);
+
+  @override
+  int reduce(status) {
+    // The reduce method has access to the store state
+    // and instance variables
+    return state + incrementBy;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// BaseModel has direct access to the store, state and dispatch function
+/// Its a convienent helper class to quickly create a ViewModel
 class _VM extends BaseModel<int> {
   final int count;
 
@@ -64,7 +73,16 @@ class _VM extends BaseModel<int> {
 
   @override
   BaseModel fromStore() {
-    return _VM(store, count: state);
+    // You can access the store's state directly with state
+    // or through store.state if you like
+    final count = state;
+    return _VM(store, count: count);
+  }
+
+  incrementCount() {
+    // You can dispatch within the BaseModel
+    // or within the Widget with vm.disptach(...)
+    dispatch(IncrementCountAction(1));
   }
 }
 
@@ -72,7 +90,8 @@ class CounterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<int, _VM>(
-      converter: (store) => _VM(store).fromStore(), // initialize the VM
+      converter: (store) =>
+          _VM(store).fromStore(), // <-- Initialize the BaseModel
       builder: (context, vm) => render(context, vm),
     );
   }
@@ -80,7 +99,7 @@ class CounterWidget extends StatelessWidget {
   Widget render(BuildContext context, _VM vm) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text("ReduxCompact demo"),
+        title: Text("Redux Compact"),
       ),
       body: Center(
         child: Column(
@@ -95,7 +114,8 @@ class CounterWidget extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => vm.dispatch(IncrementCountAction()),
+        onPressed: () =>
+            vm.incrementCount(), // <-- Dispatch through the BaseModel
         tooltip: "Increment",
         child: new Icon(Icons.add),
       ),
