@@ -6,7 +6,6 @@ import 'package:redux_compact/redux_compact.dart';
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Initialize the store as recommended by Flutter redux
-
 void main() {
   // Create an instance of ReduxCompact reducer and middleware.
   // In this example the AppState is an integer representing a counter
