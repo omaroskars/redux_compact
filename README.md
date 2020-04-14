@@ -36,7 +36,7 @@ class IncrementCountAction extends CompactAction<AppState> {
   IncrementCountAction(this.incrementBy);
 
   @override
-  int reduce(status) {
+  AppState reduce(status) {
     return state.copy(
       counter: incrementBy
     );
@@ -65,7 +65,7 @@ class IncrementCountAction extends CompactAction<AppState> {
   IncrementCountAction(this.incrementBy);
 
   @override
-  int reduce(status) {
+  AppState reduce(status) {
     return state.copy(
       counter: state.counter + incrementBy,
     );
