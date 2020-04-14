@@ -12,17 +12,6 @@ _This documentation assumes that you are already familiar with [Redux](https://p
 
 For a full overview visit the [examples](https://github.com/omaroskars/redux_compact/tree/master/example)
 
-<!--This documentation assumes you are already familiar with
-
-- [Redux](https://pub.dev/packages/redux) and its core concepts
-- [Flutter Redux](https://pub.dev/packages/flutter_redux) setup and usage
-
-You should setup your app and store as recommended by [Flutter Redux](https://pub.dev/packages/flutter_redux).
-
-In order to use Redux Compact you must add add the `compactMiddlware` to the store and use the `compactReducer` to maintain some state.
-
-In this exmaple the `compactReducer` is the root reducer for `AppState`. -->
-
 Create your store as recommended by Flutter Redux. Add Redux Compact middleware and reducer to the store.
 
 ```dart
@@ -47,7 +36,7 @@ class IncrementCountAction extends CompactAction<AppState> {
   IncrementCountAction(this.incrementBy);
 
   @override
-  int reduce(status) {
+  AppState reduce(status) {
     return state.copy(
       counter: incrementBy
     );
@@ -76,7 +65,7 @@ class IncrementCountAction extends CompactAction<AppState> {
   IncrementCountAction(this.incrementBy);
 
   @override
-  int reduce(status) {
+  AppState reduce(status) {
     return state.copy(
       counter: state.counter + incrementBy,
     );
