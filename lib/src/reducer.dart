@@ -5,11 +5,11 @@ import 'models.dart';
 class CompactReducer<St> {
   Reducer<St> createReducer() {
     return combineReducers<St>([
-      TypedReducer<St, ReduceAction>(_handleReduceAction),
+      TypedReducer<St, CompactAction>(_handleCompactAction),
     ]);
   }
 
-  St _handleReduceAction(St state, ReduceAction action) {
-    return action.action.reduce(action.status);
+  St _handleCompactAction(St state, CompactAction action) {
+    return action.reduce();
   }
 }

@@ -5,49 +5,53 @@ import 'models.dart';
 typedef ErrorFn = Function(dynamic error);
 
 Middleware<St> createCompactMiddleware<St>({Function onError}) {
-  return (Store<St> store, dynamic act, NextDispatcher next) async {
-    next(act);
-
-    final action = isCompactAction(act);
-    if (action == null) {
-      return;
-    }
-
-    action.setStore(store);
-    action.before();
-
-    try {
-      final request = action.request();
-      if (request is Future) {
-        store.dispatch(ReduceAction(action, RequestStatus(isLoading: true)));
-
-        final res = await request;
-
-        store.dispatch(ReduceAction(
-          action,
-          RequestStatus(
-            data: res,
-          ),
-        ));
-
-        action.after();
-        return;
-      }
-    } catch (e) {
-      store.dispatch(ReduceAction(action, RequestStatus(error: e)));
-
-      if (onError is ErrorFn) {
-        store.dispatch(onError(e));
-      }
-      return;
-    }
-
-    store.dispatch(ReduceAction(action, null));
-    action.after();
-  };
+  return (Store<St> store, dynamic action, NextDispatcher next) =>
+      compactMiddleware(store, action, next, onError: onError);
 }
 
 CompactAction isCompactAction(dynamic action) {
   if (action is CompactAction) return action;
   return null;
+}
+
+dynamic compactMiddleware<St>(
+  Store<St> store,
+  dynamic action,
+  NextDispatcher next, {
+  Function onError,
+}) async {
+  final compactAction = isCompactAction(action);
+
+  if (compactAction == null) {
+    return next(action);
+  }
+
+  compactAction.setStore(store);
+  compactAction.before();
+
+  try {
+    final request = compactAction.request();
+    if (request is Future) {
+      compactAction.setRequestStatus(RequestStatus(isLoading: true));
+      next(compactAction);
+
+      final res = await request;
+      compactAction.setRequestStatus(RequestStatus(data: res));
+      next(compactAction);
+
+      compactAction.after();
+      return;
+    }
+  } catch (e) {
+    compactAction.setRequestStatus(RequestStatus(error: e));
+    next(action);
+
+    if (onError is ErrorFn) {
+      onError(e);
+    }
+    return;
+  }
+
+  next(compactAction);
+  compactAction.after();
 }
