@@ -194,7 +194,7 @@ class CounterWidget extends StatelessWidget {
 /// When it gets a response it increments the counter and updates the description with the response
 class IncrementCountAction extends CompactAction<AppState> {
   @override
-  Future request() {
+  Future makeRequest() {
     final url = "http://numbersapi.com/${state.counter + 1}";
     final res = http.read(url);
 
@@ -204,19 +204,19 @@ class IncrementCountAction extends CompactAction<AppState> {
   @override
   AppState reduce() {
     // Handle loading state
-    if (requestStatus.isLoading) {
-      return state.copy(isLoading: requestStatus.isLoading);
+    if (request.isLoading) {
+      return state.copy(isLoading: request.isLoading);
     }
 
     // Update the error message if an error occurs
-    if (requestStatus.hasError) {
+    if (request.hasError) {
       return state.copy(
         errorMsg: "Error occured",
       );
     }
 
     // Parse response from the server
-    final description = requestStatus.data;
+    final description = request.data;
 
     // Update the state with incremented counter
     // and a description from the server

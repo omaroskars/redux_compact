@@ -124,39 +124,39 @@ class SyncAction extends CompactAction {
 }
 
 class AsyncAction extends CompactAction {
-  request() {
+  makeRequest() {
     return Future<String>.value('response');
   }
 
   @override
   reduce() {
-    if (requestStatus.isLoading) {
+    if (request.isLoading) {
       return "loading";
     }
 
-    if (requestStatus.hasError) {
+    if (request.hasError) {
       return "error";
     }
 
-    return requestStatus.data;
+    return request.data;
   }
 }
 
 class AsyncErrorAction extends CompactAction {
-  request() {
+  makeRequest() {
     return Future<String>.error('error');
   }
 
   @override
   reduce() {
-    if (requestStatus.isLoading) {
+    if (request.isLoading) {
       return "loading";
     }
 
-    if (requestStatus.hasError) {
-      return requestStatus.error;
+    if (request.hasError) {
+      return request.error;
     }
 
-    return requestStatus.data;
+    return request.data;
   }
 }

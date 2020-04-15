@@ -16,9 +16,9 @@ abstract class CompactAction<St> {
 
   St get state => _store.state;
 
-  RequestStatus get requestStatus => _requestStatus;
-
   Dispatch<St> get dispatch => _store.dispatch;
+
+  RequestStatus get request => _requestStatus;
 
   void before() {}
 
@@ -26,7 +26,7 @@ abstract class CompactAction<St> {
 
   St reduce();
 
-  FutureOr<dynamic> request() {
+  FutureOr<dynamic> makeRequest() {
     return null;
   }
 }

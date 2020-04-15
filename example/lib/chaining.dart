@@ -214,7 +214,7 @@ class FetchDescriptionAction extends CompactAction<AppState> {
   FetchDescriptionAction(this.count);
 
   @override
-  Future request() {
+  Future makeRequest() {
     final url = "http://numbersapi.com/${count}";
     final res = http.read(url);
 
@@ -223,19 +223,19 @@ class FetchDescriptionAction extends CompactAction<AppState> {
 
   AppState reduce() {
     // Handle loading state
-    if (requestStatus.isLoading) {
-      return state.copy(isLoading: requestStatus.isLoading);
+    if (request.isLoading) {
+      return state.copy(isLoading: request.isLoading);
     }
 
     // Update the error message if an error occurs
-    if (requestStatus.hasError) {
+    if (request.hasError) {
       return state.copy(
         errorMsg: "Error occured",
       );
     }
 
     // Parse response from the server
-    final description = requestStatus.data;
+    final description = request.data;
 
     // Update the state with incremented counter
     // and a description from the server
