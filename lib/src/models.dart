@@ -6,12 +6,17 @@ typedef Dispatch<St> = void Function(CompactAction<St> action);
 
 abstract class CompactAction<St> {
   Store<St> _store;
+  RequestStatus _requestStatus;
 
   void setStore(Store store) => _store = (store as Store<St>);
+
+  void setRequestStatus(RequestStatus status) => _requestStatus = status;
 
   Store<St> get store => _store;
 
   St get state => _store.state;
+
+  RequestStatus get requestStatus => _requestStatus;
 
   Dispatch<St> get dispatch => _store.dispatch;
 
@@ -19,7 +24,7 @@ abstract class CompactAction<St> {
 
   void after() {}
 
-  St reduce(RequestStatus status);
+  St reduce();
 
   FutureOr<dynamic> request() {
     return null;
