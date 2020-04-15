@@ -55,7 +55,7 @@ class IncrementCountAction extends CompactAction<int> {
   IncrementCountAction(this.incrementBy);
 
   @override
-  int reduce(status) {
+  int reduce() {
     // The reduce method has access to the store state
     // and instance variables
     return state + incrementBy;
