@@ -41,13 +41,6 @@ class RequestStatus {
   RequestStatus({this.isLoading = false, this.data, this.error});
 }
 
-class ReduceAction {
-  final CompactAction action;
-  final RequestStatus status;
-
-  ReduceAction(this.action, this.status);
-}
-
 abstract class BaseModel<T> {
   final Store store;
 
