@@ -5,9 +5,11 @@ import 'package:redux/redux.dart';
 typedef Dispatch<St> = void Function(CompactAction<St> action);
 
 abstract class CompactAction<St> {
+  /// The redux store
   Store<St> _store;
   RequestStatus _requestStatus;
 
+  /// Setter for the action store
   void setStore(Store store) => _store = (store as Store<St>);
 
   void setRequestStatus(RequestStatus status) => _requestStatus = status;
@@ -18,21 +20,35 @@ abstract class CompactAction<St> {
 
   Dispatch<St> get dispatch => _store.dispatch;
 
+  /// Status of a request.
+  ///
+  /// `isLoading`: Indicates if a request is loading
+  ///
+  /// `data`: The response from the request
+  ///
+  /// `error`: The error if it occurs
   RequestStatus get request => _requestStatus;
 
-  void before() {}
-
-  void after() {}
-
+  /// The action reducer
   St reduce();
 
+  /// Creates an asynchronous action
   FutureOr<dynamic> makeRequest() {
     return null;
   }
+
+  /// Runs before `reduce()`.
+  void before() {}
+
+  /// Runs after `reduce()`.
+  void after() {}
 }
 
 class RequestStatus {
+  /// Indicates if the request is running
   final bool isLoading;
+
+  /// If the request is successfull
   final dynamic data;
   final dynamic error;
 
