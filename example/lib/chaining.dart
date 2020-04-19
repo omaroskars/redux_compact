@@ -68,7 +68,51 @@ class AppState {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+/// Setup the redux store as is recommended by flutter_redux.
 
+void main() {
+  // Create an instance of Redux Compact reducer and middleware
+  // and initialize the redux store
+
+  final compactReducer = ReduxCompact.createReducer<AppState>();
+  final compactMiddleware = ReduxCompact.createMiddleware<AppState>();
+
+  final store = new Store<AppState>(
+    compactReducer,
+    initialState: AppState.initialState(),
+    middleware: [
+      compactMiddleware,
+    ],
+  );
+
+  runApp(MyApp(
+    store: store,
+    title: "Redux compact demo",
+  ));
+}
+
+class MyApp extends StatelessWidget {
+  final Store<AppState> store;
+  final String title;
+
+  const MyApp({Key key, this.store, this.title}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new StoreProvider<AppState>(
+      store: store,
+      child: MaterialApp(
+        title: title,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: CounterWidget(),
+      ),
+    );
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
 /// Helper class known as a ViewModel.
 /// The view model has direct access to the store's state for convenience.
 /// You can therefore use the state directly or access it through the store.state if you like
@@ -168,7 +212,6 @@ class CounterWidget extends StatelessWidget {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
 /// Before the reduce method is run it dispatches: [ShowDescriptionCountAction]
 /// Then it Increments the count by incrementBy.
 /// Finally it dispatches: [FetchDescriptionAction]
@@ -241,56 +284,6 @@ class FetchDescriptionAction extends CompactAction<AppState> {
     // and a description from the server
     return state.copy(
       description: description,
-    );
-  }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-///
-/// Setup the redux store as is recommended by flutter_redux.
-
-void main() {
-  // Create an instance of Redux Compact reducer and middleware
-  // and initialize the redux store
-
-  final compactReducer = ReduxCompact.createReducer<AppState>();
-  final compactMiddleware = ReduxCompact.createMiddleware<AppState>();
-
-  final store = new Store<AppState>(
-    compactReducer,
-    initialState: AppState.initialState(),
-    middleware: [
-      compactMiddleware,
-    ],
-  );
-
-  runApp(MyApp(
-    store: store,
-    title: "Redux compact demo",
-  ));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/// Just a basic Flutter redux app setup.
-/// The StoreProvider should wrap the MaterialApp
-
-class MyApp extends StatelessWidget {
-  final Store<AppState> store;
-  final String title;
-
-  const MyApp({Key key, this.store, this.title}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return new StoreProvider<AppState>(
-      store: store,
-      child: MaterialApp(
-        title: title,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: CounterWidget(),
-      ),
     );
   }
 }

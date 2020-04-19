@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:redux_compact/redux_compact.dart';
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Setup a basic Redux state for the app
 /// The AppState contains:
 ///   counter     : Counter for how many times the button is pressed
 ///   description : Description text from a server
@@ -56,13 +55,11 @@ class AppState {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///
 /// Setup the redux store as is recommended by flutter_redux.
 
 void main() {
   // Create an instance of Redux Compact reducer and middleware
   // and initialize the redux store
-
   final compactReducer = ReduxCompact.createReducer<AppState>();
   final compactMiddleware = ReduxCompact.createMiddleware<AppState>();
 
@@ -79,11 +76,6 @@ void main() {
     title: "Redux compact demo",
   ));
 }
-
-///////////////////////////////////////////////////////////////////////////////
-///
-/// Just a basic Flutter redux app setup.
-/// The StoreProvider should wrap the MaterialApp
 
 class MyApp extends StatelessWidget {
   final Store<AppState> store;
@@ -107,7 +99,6 @@ class MyApp extends StatelessWidget {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
 /// Helper class known as a ViewModel.
 /// The view model has direct access to the store's state for convenience.
 /// You can therefore use the state directly or access it through the store.state if you like
@@ -188,7 +179,6 @@ class CounterWidget extends StatelessWidget {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
 /// This action makes an asynchronous request to the numbers api.
 /// Updates the state when its loading,
 /// When it gets a response it increments the counter and updates the description with the response
@@ -215,16 +205,11 @@ class IncrementCountAction extends CompactAction<AppState> {
       );
     }
 
-    // Parse response from the server
-    final description = request.data;
-
     // Update the state with incremented counter
     // and a description from the server
     return state.copy(
       counter: state.counter + 1,
-      description: description,
+      description: request.data,
     );
   }
 }
-
-///////////////////////////////////////////////////////////////////////////////
