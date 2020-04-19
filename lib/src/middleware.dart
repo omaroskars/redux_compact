@@ -32,7 +32,7 @@ dynamic compactMiddleware<St>(
   try {
     final request = compactAction.makeRequest();
     if (request is Future) {
-      compactAction.setRequestStatus(RequestStatus(isLoading: true));
+      compactAction.setRequestStatus(RequestStatus(loading: true));
       next(compactAction);
 
       final res = await request;

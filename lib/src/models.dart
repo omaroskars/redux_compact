@@ -45,16 +45,13 @@ abstract class CompactAction<St> {
 }
 
 class RequestStatus {
-  /// Indicates if the request is running
-  final bool isLoading;
-
-  /// If the request is successfull
+  final bool loading;
   final dynamic data;
   final dynamic error;
 
   bool get hasError => error != null;
 
-  RequestStatus({this.isLoading = false, this.data, this.error});
+  RequestStatus({this.loading = false, this.data, this.error});
 }
 
 abstract class BaseModel<T> {

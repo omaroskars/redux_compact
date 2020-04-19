@@ -194,8 +194,8 @@ class IncrementCountAction extends CompactAction<AppState> {
   @override
   AppState reduce() {
     // Handle loading state
-    if (request.isLoading) {
-      return state.copy(isLoading: request.isLoading);
+    if (request.loading) {
+      return state.copy(isLoading: request.loading);
     }
 
     // Update the error message if an error occurs

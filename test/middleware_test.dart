@@ -130,7 +130,7 @@ class AsyncAction extends CompactAction {
 
   @override
   reduce() {
-    if (request.isLoading) {
+    if (request.loading) {
       return "loading";
     }
 
@@ -149,7 +149,7 @@ class AsyncErrorAction extends CompactAction {
 
   @override
   reduce() {
-    if (request.isLoading) {
+    if (request.loading) {
       return "loading";
     }
 

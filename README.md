@@ -36,9 +36,9 @@ class IncrementCountAction extends CompactAction<AppState> {
   IncrementCountAction(this.incrementBy);
 
   @override
-  AppState reduce(status) {
+  AppState reduce() {
     return state.copy(
-      counter: incrementBy
+      counter: state.counter + incrementBy
     );
   }
 }
@@ -48,7 +48,7 @@ class IncrementCountAction extends CompactAction<AppState> {
 
 In order to use Redux Compact you must `dispatch` an action that extends a `CompactAction`.
 
-All compact actions must implement the `reduce` method which is the reducer for the action. The reduce method has direct access to instance variables, dispatch function and the store state. The method accepts a `RequestStatus` as parameter to keep track of asynchronous state.
+All compact actions must implement the `reduce` method which is the reducer for the action. The reduce method has direct access to instance variables, dispatch function and the store state.
 
 **Keep in mind**
 
@@ -65,7 +65,7 @@ class IncrementCountAction extends CompactAction<AppState> {
   IncrementCountAction(this.incrementBy);
 
   @override
-  AppState reduce(status) {
+  AppState reduce() {
     return state.copy(
       counter: state.counter + incrementBy,
     );
@@ -73,15 +73,13 @@ class IncrementCountAction extends CompactAction<AppState> {
 }
 ```
 
-_\*Note: The request status will always be `null` for synchronous actions_
-
 ### Async Action
 
-To create an asynchronous action you simply need to implement the `request()` method as a `Future`. The middleware then `awaits` the request and calls the reduce method with a `RequestStatus`. As your request executes the values of `Request Status` change allowing you to make state changes accordingly.
+To create an asynchronous action you simply need to implement the `makeRequest()` method as a `Future`. As your request executes the values of `request` instance variable change allowing you to make state changes accordingly.
 
-The `RequestStatus` is an object that contains:
+The `request` object contains:
 
-- **isLoading:** `true` if a request is in flight, `false` otherwise
+- **loading:** `true` if a request is in flight, `false` otherwise
 - **error:** `dynamic` if an error occurs, `null` otherwise
 - **data**: `dynamic` if the request is successful, `null` otherwise
 
@@ -92,8 +90,8 @@ class IncrementCountAction extends CompactAction<AppState> {
   IncrementCountAction(this.incrementBy);
 
   @override
-  request() {
-    // The request method has direct access to
+  makeRequest() {
+    // The makeRequest() method has direct access to
     // instance variable and current state
     const count = state.counter + incrementBy;
     final url = "http://numbersapi.com/$count";
@@ -103,14 +101,14 @@ class IncrementCountAction extends CompactAction<AppState> {
   }
 
   @override
-  AppState reduce(RequestStatus status) {
-    // If we are waiting for a response isLoading, will be true.
-    if (status.isLoading) {
-      return state.copy(isLoading: status.isLoading);
+  AppState reduce() {
+    // If we are waiting for a response loading, will be true.
+    if (request.loading) {
+      return state.copy(isLoading: request.loading);
     }
 
     // hasError is a helper function that checks if error != null
-    if (status.hasError) {
+    if (request.hasError) {
       return state.copy(
         errorMsg: error.message,
       );
@@ -119,7 +117,7 @@ class IncrementCountAction extends CompactAction<AppState> {
     // The request was successful
     return state.copy(
       counter: state.counter + 1,
-      description: status.data,
+      description: request.data,
     );
   }
 }
