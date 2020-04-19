@@ -1,7 +1,6 @@
 name: redux_compact
-description: A new Flutter package project.
+description: Reduce the massive amount of boilerplate for Flutter redux application
 version: 0.0.1
-author: omaroskars
 homepage: https://github.com/omaroskars/redux_compact
 
 environment:
