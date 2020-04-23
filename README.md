@@ -44,6 +44,16 @@ class IncrementCountAction extends CompactAction<AppState> {
 }
 ```
 
+### Global error handling
+
+You can add a global error handler to all your asynchrounus actions simply by implementing the `onError` function when creating the middleware. The function accepts `dynamic error` and the `dispatch` function as parameters.
+
+```dart
+  ReduxCompact.createMiddleware<AppState>(
+    onError: (error, dispatch) => yourErrorFunction(error, dispatch)
+  );
+```
+
 ## Compact Action
 
 In order to use Redux Compact you must `dispatch` an action that extends a `CompactAction`.
