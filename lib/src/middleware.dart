@@ -2,9 +2,10 @@ import 'package:redux/redux.dart';
 
 import 'models.dart';
 
-typedef ErrorFn = Function(dynamic error);
+typedef ErrorFn = void Function(
+    dynamic error, void Function(dynamic action) dispatch);
 
-Middleware<St> createCompactMiddleware<St>({Function onError}) {
+Middleware<St> createCompactMiddleware<St>({ErrorFn onError}) {
   return (Store<St> store, dynamic action, NextDispatcher next) =>
       compactMiddleware(store, action, next, onError: onError);
 }
@@ -18,7 +19,7 @@ dynamic compactMiddleware<St>(
   Store<St> store,
   dynamic action,
   NextDispatcher next, {
-  Function onError,
+  ErrorFn onError,
 }) async {
   final compactAction = isCompactAction(action);
 
@@ -46,8 +47,8 @@ dynamic compactMiddleware<St>(
     compactAction.setRequestStatus(RequestStatus(error: e));
     next(action);
 
-    if (onError is ErrorFn) {
-      onError(e);
+    if (onError != null) {
+      onError(e, store.dispatch);
     }
     return;
   }
