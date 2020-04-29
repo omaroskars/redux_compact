@@ -5,9 +5,16 @@ import 'models.dart';
 typedef ErrorFn = void Function(
     dynamic error, void Function(dynamic action) dispatch);
 
-Middleware<St> createCompactMiddleware<St>({ErrorFn onError}) {
+Middleware<St> createCompactMiddleware<St>(
+    {ErrorFn onError, ApiProvider<St> apiProvider}) {
   return (Store<St> store, dynamic action, NextDispatcher next) =>
-      compactMiddleware(store, action, next, onError: onError);
+      compactMiddleware(
+        store,
+        action,
+        next,
+        onError: onError,
+        apiProvider: apiProvider,
+      );
 }
 
 CompactAction isCompactAction(dynamic action) {
@@ -20,6 +27,7 @@ dynamic compactMiddleware<St>(
   dynamic action,
   NextDispatcher next, {
   ErrorFn onError,
+  ApiProvider<St> apiProvider,
 }) async {
   final compactAction = isCompactAction(action);
 
@@ -28,6 +36,12 @@ dynamic compactMiddleware<St>(
   }
 
   compactAction.setStore(store);
+
+  if (apiProvider != null) {
+    apiProvider.setStore(store);
+    compactAction.setApiProvider(apiProvider);
+  }
+
   compactAction.before();
 
   try {
@@ -37,6 +51,7 @@ dynamic compactMiddleware<St>(
       next(compactAction);
 
       final res = await request;
+
       compactAction.setRequestStatus(RequestStatus(data: res));
       next(compactAction);
 
