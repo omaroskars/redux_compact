@@ -1,3 +1,7 @@
+## 0.2.1
+
+- Remove support for ApiProvider
+
 ## 0.2.0
 
 - Add support for ApiProvider
