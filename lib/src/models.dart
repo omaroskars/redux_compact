@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:redux/redux.dart';
 
 typedef Dispatch<St> = void Function(CompactAction<St> action);
@@ -9,20 +8,15 @@ abstract class CompactAction<St> {
   /// The redux store
   Store<St> _store;
   RequestStatus _requestStatus;
-  ApiProvider _client;
 
   /// Setter for the action store
   void setStore(Store store) => _store = (store as Store<St>);
 
   void setRequestStatus(RequestStatus status) => _requestStatus = status;
 
-  void setApiProvider(ApiProvider provider) => _client = provider;
-
   Store<St> get store => _store;
 
   St get state => _store.state;
-
-  ApiProvider get client => _client;
 
   Dispatch<St> get dispatch => _store.dispatch;
 
@@ -39,9 +33,7 @@ abstract class CompactAction<St> {
   St reduce();
 
   /// Creates an asynchronous action
-  FutureOr<dynamic> makeRequest() {
-    return null;
-  }
+  FutureOr<dynamic> makeRequest() {}
 
   /// Runs before `reduce()`.
   void before() {}
@@ -71,27 +63,3 @@ abstract class BaseModel<T> {
 
   Dispatch get dispatch => store.dispatch;
 }
-
-abstract class ApiProvider<St> {
-  String baseUrl;
-  String authUrl;
-
-  Store<St> _store;
-
-  ApiProvider(this.baseUrl, {this.authUrl});
-
-  void setStore(Store store) => _store = (store as Store<St>);
-  Store<St> get store => _store;
-  St get state => _store.state;
-
-  Future<dynamic> request({
-    @required String url,
-    @required String method,
-    Map<String, dynamic> query,
-    Map<String, dynamic> headers,
-    dynamic body,
-    ProviderType providerType,
-  });
-}
-
-enum ProviderType { base, auth }
