@@ -1,3 +1,7 @@
+## 0.3.0
+
+- Null safety
+
 ## 0.2.1
 
 - Remove support for ApiProvider

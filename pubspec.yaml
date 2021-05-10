@@ -1,6 +1,6 @@
 name: redux_compact
 description: Reduce the massive amount of boilerplate for Flutter redux application
-version: 0.2.1
+version: 0.3.0
 homepage: https://github.com/omaroskars/redux_compact
 
 environment:
