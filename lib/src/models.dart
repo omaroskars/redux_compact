@@ -6,8 +6,8 @@ typedef Dispatch<St> = void Function(CompactAction<St> action);
 
 abstract class CompactAction<St> {
   /// The redux store
-  Store<St> _store;
-  RequestStatus _requestStatus;
+  late Store<St> _store;
+  late RequestStatus _requestStatus;
 
   /// Setter for the action store
   void setStore(Store store) => _store = (store as Store<St>);
@@ -53,11 +53,11 @@ class RequestStatus {
 }
 
 abstract class BaseModel<T> {
-  final Store store;
+  final Store<T> store;
 
   BaseModel(this.store);
 
-  BaseModel fromStore();
+  BaseModel<T> fromStore();
 
   T get state => store.state;
 

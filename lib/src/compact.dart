@@ -5,7 +5,7 @@ import 'reducer.dart';
 
 class ReduxCompact<St> {
   static Middleware<St> createMiddleware<St>({
-    ErrorFn onError,
+    ErrorFn? onError,
   }) {
     return createCompactMiddleware(
       onError: onError,

@@ -14,12 +14,11 @@ import 'package:redux_compact/redux_compact.dart';
 ///   prevDesc    : The previous description
 
 class AppState {
-  final int counter;
-  final String description;
-  final bool isLoading;
-  final String errorMsg;
-
-  final String prevDesc;
+  final int? counter;
+  final String? description;
+  final bool? isLoading;
+  final String? errorMsg;
+  final String? prevDesc;
 
   AppState({
     this.counter,
@@ -30,11 +29,11 @@ class AppState {
   });
 
   AppState copy({
-    int counter,
-    String description,
-    bool isLoading,
-    dynamic errorMsg,
-    String prevDesc,
+    int? counter,
+    String? description,
+    bool? isLoading,
+    dynamic? errorMsg,
+    String? prevDesc,
   }) =>
       AppState(
         counter: counter ?? this.counter,
@@ -95,7 +94,8 @@ class MyApp extends StatelessWidget {
   final Store<AppState> store;
   final String title;
 
-  const MyApp({Key key, this.store, this.title}) : super(key: key);
+  const MyApp({Key? key, required this.store, required this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -118,14 +118,14 @@ class MyApp extends StatelessWidget {
 /// You can therefore use the state directly or access it through the store.state if you like
 
 class _VM extends BaseModel<AppState> {
-  final int count;
-  final String desc;
-  final bool isLoading;
-  final String errorMsg;
-  final String prevDesc;
+  final int? count;
+  final String? desc;
+  final bool? isLoading;
+  final String? errorMsg;
+  final String? prevDesc;
 
   _VM(
-    Store store, {
+    Store<AppState> store, {
     this.count,
     this.desc,
     this.isLoading,
@@ -134,7 +134,7 @@ class _VM extends BaseModel<AppState> {
   }) : super(store);
 
   @override
-  BaseModel fromStore() {
+  _VM fromStore() {
     return _VM(
       store,
       count: state.counter,
@@ -175,18 +175,18 @@ class CounterWidget extends StatelessWidget {
       children: <Widget>[
         Text(
           vm.count.toString(),
-          style: Theme.of(context).textTheme.display1,
+          style: Theme.of(context).textTheme.headline4,
         ),
         Padding(
           padding: const EdgeInsets.all(20.0),
-          child: vm.isLoading
+          child: vm.isLoading ?? false
               ? CircularProgressIndicator(
                   backgroundColor: Colors.blue,
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   strokeWidth: 2,
                 )
               : Text(
-                  vm.desc,
+                  vm.desc ?? "",
                   textAlign: TextAlign.center,
                 ),
         ),
@@ -223,7 +223,7 @@ class IncrementCountAction extends CompactAction<AppState> {
   @override
   AppState reduce() {
     return state.copy(
-      counter: state.counter + incrementBy,
+      counter: (state.counter ?? 0) + incrementBy,
     );
   }
 
@@ -234,7 +234,7 @@ class IncrementCountAction extends CompactAction<AppState> {
 
   @override
   void after() {
-    dispatch(FetchDescriptionAction(state.counter));
+    dispatch(FetchDescriptionAction((state.counter ?? 0)));
   }
 }
 

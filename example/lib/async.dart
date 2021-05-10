@@ -33,7 +33,8 @@ class MyApp extends StatelessWidget {
   final Store<AppState> store;
   final String title;
 
-  const MyApp({Key key, this.store, this.title}) : super(key: key);
+  const MyApp({Key? key, required this.store, required this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,13 +57,13 @@ class MyApp extends StatelessWidget {
 /// You can therefore use the state directly or access it through the store.state if you like
 
 class _VM extends BaseModel<AppState> {
-  final int count;
-  final String desc;
-  final bool isLoading;
-  final String errorMsg;
+  final int? count;
+  final bool? isLoading;
+  final String? desc;
+  final String? errorMsg;
 
   _VM(
-    Store store, {
+    Store<AppState> store, {
     this.count,
     this.desc,
     this.isLoading,
@@ -70,7 +71,7 @@ class _VM extends BaseModel<AppState> {
   }) : super(store);
 
   @override
-  BaseModel fromStore() {
+  _VM fromStore() {
     return _VM(store,
         count: state.counter,
         desc: state.description,
@@ -99,7 +100,7 @@ class CounterWidget extends StatelessWidget {
   }
 
   Widget buildBody(BuildContext context, _VM vm) {
-    if (vm.isLoading) {
+    if (vm.isLoading ?? false) {
       return CircularProgressIndicator(
         backgroundColor: Colors.blue,
         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -108,7 +109,7 @@ class CounterWidget extends StatelessWidget {
     }
 
     if (vm.errorMsg != null) {
-      return Text(vm.errorMsg);
+      return Text(vm.errorMsg ?? "");
     }
 
     return Column(
@@ -116,12 +117,12 @@ class CounterWidget extends StatelessWidget {
       children: <Widget>[
         Text(
           vm.count.toString(),
-          style: Theme.of(context).textTheme.display1,
+          style: Theme.of(context).textTheme.headline4,
         ),
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: Text(
-            vm.desc,
+            vm.desc ?? "",
             textAlign: TextAlign.center,
           ),
         ),
@@ -137,7 +138,7 @@ class CounterWidget extends StatelessWidget {
 class IncrementCountAction extends CompactAction<AppState> {
   @override
   Future makeRequest() {
-    final url = "http://numbersapi.com/${state.counter + 1}";
+    final url = "http://numbersapi.com/${(state.counter ?? 0) + 1}";
     final res = http.read(url);
 
     return res;
@@ -160,7 +161,7 @@ class IncrementCountAction extends CompactAction<AppState> {
     // Update the state with incremented counter
     // and a description from the server
     return state.copy(
-      counter: state.counter + 1,
+      counter: (state.counter ?? 0) + 1,
       description: request.data,
     );
   }

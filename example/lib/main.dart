@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
   final Store<int> store;
   final String title;
 
-  const MyApp({Key key, this.store, this.title}) : super(key: key);
+  const MyApp({Key? key, required this.store, required this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -66,22 +67,22 @@ class IncrementCountAction extends CompactAction<int> {
 /// BaseModel has direct access to the store, state and dispatch function
 /// Its a convienent helper class to quickly create a ViewModel
 class _VM extends BaseModel<int> {
-  final int count;
+  final int? count;
 
-  _VM(Store store, {this.count}) : super(store);
-
-  @override
-  BaseModel fromStore() {
-    // You can access the store's state directly with state
-    // or through store.state if you like
-    final count = state;
-    return _VM(store, count: count);
-  }
+  _VM(Store<int> store, {this.count = 0}) : super(store);
 
   incrementCount() {
     // You can dispatch within the BaseModel
     // or within the Widget with vm.disptach(...)
     dispatch(IncrementCountAction(1));
+  }
+
+  @override
+  _VM fromStore() {
+    // You can access the store's state directly with state
+    // or through store.state if you like
+    final count = state;
+    return _VM(store, count: count);
   }
 }
 
@@ -107,7 +108,7 @@ class CounterWidget extends StatelessWidget {
             Text('You have pushed the button this many times:'),
             Text(
               vm.count.toString(),
-              style: Theme.of(context).textTheme.display1,
+              style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),

@@ -6,10 +6,10 @@
 ///   errorMsg    : An error message if an error occurs
 
 class AppState {
-  final int counter;
-  final String description;
-  final bool isLoading;
-  final String errorMsg;
+  final int? counter;
+  final String? description;
+  final bool? isLoading;
+  final String? errorMsg;
 
   AppState({
     this.counter,
@@ -19,10 +19,10 @@ class AppState {
   });
 
   AppState copy({
-    int counter,
-    String description,
-    bool isLoading,
-    dynamic errorMsg,
+    int? counter,
+    String? description,
+    bool? isLoading,
+    dynamic? errorMsg,
   }) =>
       AppState(
         counter: counter ?? this.counter,
