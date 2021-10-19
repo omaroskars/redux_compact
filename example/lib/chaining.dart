@@ -258,7 +258,7 @@ class FetchDescriptionAction extends CompactAction<AppState> {
 
   @override
   Future makeRequest() {
-    final url = "http://numbersapi.com/$count";
+    var url = Uri.parse("http://numbersapi.com/$count");
     final res = http.read(url);
 
     return res;

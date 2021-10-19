@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   flutter_redux: ^0.8.2
-  http: ^0.12.0+4
+  http: ^0.13.4
   redux_compact:
     path: ../
 
