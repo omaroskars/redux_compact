@@ -31,6 +31,7 @@ void main() {
       );
 
       final action = MockCompactAction();
+      when(action.reduce()).thenReturn('');
 
       store.dispatch(action);
 
@@ -45,6 +46,7 @@ void main() {
       );
 
       final action = MockCompactAction();
+      when(action.reduce()).thenReturn('');
 
       store.dispatch(action);
 
