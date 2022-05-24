@@ -137,7 +137,7 @@ class CounterWidget extends StatelessWidget {
 /// When it gets a response it increments the counter and updates the description with the response
 class IncrementCountAction extends CompactAction<AppState> {
   @override
-  Future makeRequest() {
+  Future makeRequest(Dispatch<AppState> dispatch) {
     var url = Uri.parse("http://numbersapi.com/${(state.counter ?? 0) + 1}");
     final res = http.read(url);
 

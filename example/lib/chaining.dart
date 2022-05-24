@@ -228,12 +228,12 @@ class IncrementCountAction extends CompactAction<AppState> {
   }
 
   @override
-  void before() {
+  void before(Dispatch<AppState> dispatch) {
     dispatch(SetPreviousDescAction());
   }
 
   @override
-  void after() {
+  void after(Dispatch<AppState> dispatch) {
     dispatch(FetchDescriptionAction((state.counter ?? 0)));
   }
 }
@@ -257,7 +257,7 @@ class FetchDescriptionAction extends CompactAction<AppState> {
   FetchDescriptionAction(this.count);
 
   @override
-  Future makeRequest() {
+  Future makeRequest(Dispatch<AppState> dispatch) {
     var url = Uri.parse("http://numbersapi.com/$count");
     final res = http.read(url);
 

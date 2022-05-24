@@ -18,8 +18,6 @@ abstract class CompactAction<St> {
 
   St get state => _store.state;
 
-  Dispatch<St> get dispatch => _store.dispatch;
-
   /// Status of a request.
   ///
   /// `isLoading`: Indicates if a request is loading
@@ -33,13 +31,13 @@ abstract class CompactAction<St> {
   St reduce();
 
   /// Creates an asynchronous action
-  FutureOr<dynamic> makeRequest() {}
+  FutureOr<dynamic> makeRequest(Dispatch<St> dispatch) {}
 
   /// Runs before `reduce()`.
-  void before() {}
+  void before(Dispatch<St> dispatch) {}
 
   /// Runs after `reduce()`.
-  void after() {}
+  void after(Dispatch<St> dispatch) {}
 }
 
 class RequestStatus {

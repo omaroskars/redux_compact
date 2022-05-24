@@ -34,10 +34,10 @@ dynamic compactMiddleware<St>(
 
   compactAction.setStore(store);
 
-  compactAction.before();
+  compactAction.before(store.dispatch);
 
   try {
-    final request = compactAction.makeRequest();
+    final request = compactAction.makeRequest(store.dispatch);
     if (request is Future) {
       compactAction.setRequestStatus(RequestStatus(loading: true));
       next(compactAction);
@@ -47,7 +47,7 @@ dynamic compactMiddleware<St>(
       compactAction.setRequestStatus(RequestStatus(data: res));
       next(compactAction);
 
-      compactAction.after();
+      compactAction.after(store.dispatch);
       return;
     }
   } catch (e) {
@@ -61,5 +61,5 @@ dynamic compactMiddleware<St>(
   }
 
   next(compactAction);
-  compactAction.after();
+  compactAction.after(store.dispatch);
 }
