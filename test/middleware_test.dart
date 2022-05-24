@@ -48,8 +48,8 @@ void main() {
 
       store.dispatch(action);
 
-      verify(action.before()).called(1);
-      verify(action.after()).called(1);
+      verify(action.before(store.dispatch)).called(1);
+      verify(action.after(store.dispatch)).called(1);
     });
 
     test("should change the state", () {
@@ -124,7 +124,7 @@ class SyncAction extends CompactAction {
 }
 
 class AsyncAction extends CompactAction {
-  makeRequest() {
+  makeRequest(Dispatch<String> dispatch) {
     return Future<String>.value('response');
   }
 
@@ -143,7 +143,7 @@ class AsyncAction extends CompactAction {
 }
 
 class AsyncErrorAction extends CompactAction {
-  makeRequest() {
+  makeRequest(Dispatch<String> dispatch) {
     return Future<String>.error('error');
   }
 
