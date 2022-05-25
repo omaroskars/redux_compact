@@ -125,10 +125,24 @@ class IncrementCountAction extends CompactAction<AppState> {
     }
 
     // The request was successful
-    return state.copy(
-      counter: state.counter + 1,
-      description: request.data,
-    );
+    if (request.hasData) {
+      return state.copy(
+        counter: state.counter + 1,
+        description: request.data,
+      );
+    }
+
+    // If you want to clear error state or success state
+    // Complete is true when success and false when error
+    if (request.complete) {
+      return state.copy(
+        description: null,
+      );
+    } else {
+      return state.copy(
+        errorMsg: null,
+      );
+    }
   }
 }
 ```
@@ -139,7 +153,7 @@ Compact Action provides two helper functions: `before` and `after`. Both of thes
 
 - The `before` method **always** runs before the `reduce` method and `asynchronous` requests.
 
-- The `after` method runs after the `reduce` method, or when an `asynchronous` request has **finished successfully**. If an error occurred in an asynchronous request the method will **not run**.
+- The `after` method runs after the `reduce` method, or when an `asynchronous` request.
 
 **Just remember the state:**
 

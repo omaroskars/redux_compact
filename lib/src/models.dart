@@ -23,6 +23,8 @@ abstract class CompactAction<St> {
   /// `data`: The response from the request
   ///
   /// `error`: The error if it occurs
+  /// 
+  /// `complete`: The complete is false if has error, else is true
   RequestStatus get request => _requestStatus;
 
   /// The action reducer
@@ -42,10 +44,12 @@ class RequestStatus {
   final bool loading;
   final dynamic data;
   final dynamic error;
+  final bool complete;
 
   bool get hasError => error != null;
+  bool get hasData => data != null;
 
-  RequestStatus({this.loading = false, this.data, this.error});
+  RequestStatus({this.loading = false, this.data, this.error, this.complete = false});
 }
 
 abstract class BaseModel<T> {

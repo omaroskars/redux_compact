@@ -47,12 +47,20 @@ dynamic compactMiddleware<St>(
       compactAction.setRequestStatus(RequestStatus(data: res));
       next(compactAction);
 
+      compactAction.setRequestStatus(RequestStatus(complete: true));
+      next(compactAction);
+
       compactAction.after(store.dispatch);
       return;
     }
   } catch (e) {
     compactAction.setRequestStatus(RequestStatus(error: e));
-    next(action);
+    next(compactAction);
+
+    compactAction.setRequestStatus(RequestStatus(complete: false));
+    next(compactAction);
+
+    compactAction.after(store.dispatch);
 
     if (onError != null) {
       onError(e, store.dispatch);

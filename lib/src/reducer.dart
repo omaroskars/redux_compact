@@ -10,6 +10,11 @@ class CompactReducer<St> {
   }
 
   St _handleCompactAction(St state, CompactAction action) {
-    return action.reduce();
+    final newState = action.reduce();
+    if (newState != null) {
+      return newState;
+    } else {
+      return state;
+    }
   }
 }
