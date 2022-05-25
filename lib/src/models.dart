@@ -14,8 +14,6 @@ abstract class CompactAction<St> {
 
   void setRequestStatus(RequestStatus status) => _requestStatus = status;
 
-  Store<St> get store => _store;
-
   St get state => _store.state;
 
   /// Status of a request.
